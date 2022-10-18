@@ -24,17 +24,26 @@ let package = Package(
 //        .package(name:"CModbus",path:"../CModbus")
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        .target(
-            name: "CModbus",
-            linkerSettings: [.unsafeFlags(["-lbsd"])]
-        ),
+        cModbusTarget(),
         .target(
             name: "SwiftLibModbus",
             dependencies: ["CModbus"]),
         .testTarget(
             name: "SwiftLibModbusTests",
-            dependencies: ["SwiftLibModbus"]),
+            dependencies: ["SwiftLibModbus"])
     ]
 )
+
+fileprivate func cModbusTarget() -> Target {
+    #if os(Linux)
+    .target(
+        name: "CModbus",
+        linkerSettings: [.unsafeFlags(["-lbsd"])]
+    )
+    #else
+    .target(
+        name: "CModbus"
+    )
+    #endif
+    
+}
